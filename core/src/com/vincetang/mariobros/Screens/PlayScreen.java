@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,6 +32,8 @@ import com.vincetang.mariobros.Tools.B2WorldCreator;
  */
 public class PlayScreen implements Screen {
 
+    TextureAtlas atlas;
+
     private MarioBros game;
     private OrthographicCamera gamecam;
     private Viewport gamePort;
@@ -46,6 +50,8 @@ public class PlayScreen implements Screen {
 
 
     public PlayScreen(MarioBros game) {
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+
         this.game = game;
         // cam used to follow mario through cam world
         gamecam = new OrthographicCamera();
@@ -67,7 +73,7 @@ public class PlayScreen implements Screen {
 
         new B2WorldCreator(world, tiledMap);
 
-        player = new Mario(world);
+        player = new Mario(world, this);
     }
 
     public void handleInput(float dt) {
@@ -90,10 +96,15 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
         gamecam.position.x = player.b2body.getPosition().x;
         gamecam.update();
+        player.update(dt);
         renderer.setView(gamecam); // only render what our gamecam can see
     }
+
+    public TextureAtlas getAtlas() {
+        return this.atlas;
+    }
     /**
-     * Called when this screen becomes the current screen for a {@link Game}.
+     * Called when this screen becomes the current screen for a Game
      */
     @Override
     public void show() {
@@ -107,15 +118,26 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void render(float delta) {
+        // separate our update logic from render
         update(delta);
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        // Clear game screen to black
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // actually clears the screen
 
+        // render our game map
         renderer.render();
 
+        // render our Box2DDebugLines
         b2dr.render(world, gamecam.combined);
 
+        // Drawing the player
+        game.batch.setProjectionMatrix(gamecam.combined); // only what the game can see
+        game.batch.begin();
+        player.draw(game.batch);
+        game.batch.end();
+
+        // Set our batch to now draw what the hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // what is shown via camera
         hud.stage.draw();
     }
@@ -123,31 +145,24 @@ public class PlayScreen implements Screen {
     /**
      * @param width
      * @param height
-     * @see ApplicationListener#resize(int, int)
      */
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height);
     }
 
-    /**
-     * @see ApplicationListener#pause()
-     */
     @Override
     public void pause() {
 
     }
 
-    /**
-     * @see ApplicationListener#resume()
-     */
     @Override
     public void resume() {
 
     }
 
     /**
-     * Called when this screen is no longer the current screen for a {@link Game}.
+     * Called when this screen is no longer the current screen for a Game
      */
     @Override
     public void hide() {

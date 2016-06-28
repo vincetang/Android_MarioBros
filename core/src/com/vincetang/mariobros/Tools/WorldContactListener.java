@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.vincetang.mariobros.MarioBros;
-import com.vincetang.mariobros.Sprites.Enemy;
-import com.vincetang.mariobros.Sprites.InteractiveTileObject;
+import com.vincetang.mariobros.Sprites.Enemies.Enemy;
+import com.vincetang.mariobros.Sprites.TileObjects.InteractiveTileObject;
 
 /**
  * Created by Vince on 16-06-27.
@@ -29,7 +29,6 @@ public class WorldContactListener implements ContactListener {
             if (object.getUserData() != null &&
                     (object.getUserData() instanceof InteractiveTileObject)) {
                 // if object is an interactiveTileObject
-
                 ((InteractiveTileObject) object.getUserData()).onHeadHit();
             }
         }

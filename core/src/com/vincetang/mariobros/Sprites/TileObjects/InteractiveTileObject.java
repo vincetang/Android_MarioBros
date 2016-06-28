@@ -1,4 +1,4 @@
-package com.vincetang.mariobros.Sprites;
+package com.vincetang.mariobros.Sprites.TileObjects;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;

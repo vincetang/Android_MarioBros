@@ -12,9 +12,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Screens.PlayScreen;
-import com.vincetang.mariobros.Sprites.Brick;
-import com.vincetang.mariobros.Sprites.Coin;
-import com.vincetang.mariobros.Sprites.Goomba;
+import com.vincetang.mariobros.Sprites.TileObjects.Brick;
+import com.vincetang.mariobros.Sprites.TileObjects.Coin;
+import com.vincetang.mariobros.Sprites.Enemies.Goomba;
 
 /**
  * Created by Vince on 16-06-27.

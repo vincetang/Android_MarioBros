@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Scenes.Hud;
+import com.vincetang.mariobros.Sprites.Goomba;
 import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Tools.B2WorldCreator;
 import com.vincetang.mariobros.Tools.WorldContactListener;
@@ -41,6 +42,7 @@ public class PlayScreen implements Screen {
     private Viewport gamePort;
     private Hud hud;
     private Mario player;
+    private Goomba goomba;
 
     private TmxMapLoader mapLoader; // loads the tmx file into the game
     private TiledMap tiledMap;
@@ -84,6 +86,9 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.setVolume(0.5f);
         music.play();
+
+        goomba = new Goomba(this, .64f, .32f);
+
     }
 
     public void handleInput(float dt) {
@@ -112,11 +117,17 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         handleInput(dt);
+
+        // Take 1 step in the physics simulation (60 times per second);
         world.step(1/60f, 6, 2);
+
+        // attach our gamecam to our players.x coordinate
         gamecam.position.x = player.b2body.getPosition().x;
 
         gamecam.update();
         player.update(dt);
+        goomba.update(dt);
+
         renderer.setView(gamecam); // only render what our gamecam can see
     }
 
@@ -155,6 +166,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined); // only what the game can see
         game.batch.begin();
         player.draw(game.batch);
+        goomba.draw(game.batch);
         game.batch.end();
 
         // Set our batch to now draw what the hud camera sees

@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Scenes.Hud;
+import com.vincetang.mariobros.Sprites.Enemy;
 import com.vincetang.mariobros.Sprites.Goomba;
 import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Tools.B2WorldCreator;
@@ -51,6 +52,7 @@ public class PlayScreen implements Screen {
     // Box2d variables
     private World world;
     private Box2DDebugRenderer b2dr;
+    private B2WorldCreator creator;
 
     private Music music;
 
@@ -76,7 +78,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(this);
+        creator = new B2WorldCreator(this);
 
         player = new Mario(this);
 
@@ -87,7 +89,6 @@ public class PlayScreen implements Screen {
         music.setVolume(0.5f);
         music.play();
 
-        goomba = new Goomba(this, 5.64f, .32f);
 
     }
 
@@ -126,7 +127,10 @@ public class PlayScreen implements Screen {
 
         gamecam.update();
         player.update(dt);
-        goomba.update(dt);
+        hud.update(dt);
+
+        for (Enemy enemy : creator.getGoombas())
+            enemy.update(dt);
 
         renderer.setView(gamecam); // only render what our gamecam can see
     }
@@ -166,14 +170,15 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined); // only what the game can see
         game.batch.begin();
         player.draw(game.batch);
-        goomba.draw(game.batch);
+        for (Enemy enemy : creator.getGoombas())
+            enemy.draw(game.batch);
         game.batch.end();
 
         // Set our batch to now draw what the hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // what is shown via camera
         hud.stage.draw();
 
-        hud.update(delta);
+
     }
 
     /**

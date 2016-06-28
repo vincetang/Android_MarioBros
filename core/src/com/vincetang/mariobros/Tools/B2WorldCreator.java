@@ -9,15 +9,24 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Screens.PlayScreen;
 import com.vincetang.mariobros.Sprites.Brick;
 import com.vincetang.mariobros.Sprites.Coin;
+import com.vincetang.mariobros.Sprites.Goomba;
 
 /**
  * Created by Vince on 16-06-27.
  */
 public class B2WorldCreator {
+
+    private Array<Goomba> goombas;
+
+    public Array<Goomba> getGoombas() {
+        return goombas;
+    }
+
     public B2WorldCreator(PlayScreen screen) {
         World world = screen.getWorld();
         TiledMap tiledMap = screen.getMap();
@@ -67,13 +76,20 @@ public class B2WorldCreator {
             new Brick(screen, rect);
         }
 
+        // create Goombas
         for (MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             new Coin(screen, rect);
         }
 
+        // Create all goombas
+        goombas = new Array<Goomba>();
+        for (MapObject object : tiledMap.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
+            goombas.add(new Goomba(screen, rect.getX()/MarioBros.PPM, rect.getY()/MarioBros.PPM));
+        }
 
     }
 }

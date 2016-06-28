@@ -83,7 +83,9 @@ public class Goomba extends Enemy {
         fdef.filter.maskBits = MarioBros.GROUND_BIT |
                 MarioBros.COIN_BIT |
                 MarioBros.BRICK_BIT|
-                MarioBros.OBJECT_BIT | MarioBros.MARIO_BIT;
+                MarioBros.OBJECT_BIT |
+                MarioBros.MARIO_BIT |
+                MarioBros.ENEMY_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
@@ -111,4 +113,5 @@ public class Goomba extends Enemy {
     public void hitOnHead() {
         setToDestroy = true;
     }
+
 }

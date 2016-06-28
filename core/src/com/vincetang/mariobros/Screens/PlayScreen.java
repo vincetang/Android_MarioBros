@@ -3,6 +3,7 @@ package com.vincetang.mariobros.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +27,7 @@ import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Scenes.Hud;
 import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Tools.B2WorldCreator;
+import com.vincetang.mariobros.Tools.WorldContactListener;
 
 /**
  * Created by Vince on 16-06-26.
@@ -48,6 +50,7 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    private Music music;
 
     public PlayScreen(MarioBros game) {
         atlas = new TextureAtlas("Mario_and_Enemies.pack");
@@ -71,9 +74,16 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, tiledMap);
+        new B2WorldCreator(this);
 
-        player = new Mario(world, this);
+        player = new Mario(this);
+
+        world.setContactListener(new WorldContactListener());
+
+        music = MarioBros.manager.get("audio/music/mario_music.ogg", Music.class);
+        music.setLooping(true);
+        music.setVolume(0.5f);
+        music.play();
     }
 
     public void handleInput(float dt) {
@@ -91,10 +101,20 @@ public class PlayScreen implements Screen {
         }
     }
 
+    public TiledMap getMap() {
+        return tiledMap;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+
     public void update(float dt) {
         handleInput(dt);
         world.step(1/60f, 6, 2);
         gamecam.position.x = player.b2body.getPosition().x;
+
         gamecam.update();
         player.update(dt);
         renderer.setView(gamecam); // only render what our gamecam can see
@@ -140,6 +160,8 @@ public class PlayScreen implements Screen {
         // Set our batch to now draw what the hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // what is shown via camera
         hud.stage.draw();
+
+        hud.update(delta);
     }
 
     /**

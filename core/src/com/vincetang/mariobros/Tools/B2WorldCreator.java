@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.vincetang.mariobros.MarioBros;
+import com.vincetang.mariobros.Screens.PlayScreen;
 import com.vincetang.mariobros.Sprites.Brick;
 import com.vincetang.mariobros.Sprites.Coin;
 
@@ -17,7 +18,10 @@ import com.vincetang.mariobros.Sprites.Coin;
  * Created by Vince on 16-06-27.
  */
 public class B2WorldCreator {
-    public B2WorldCreator(World world, TiledMap tiledMap) {
+    public B2WorldCreator(PlayScreen screen) {
+        World world = screen.getWorld();
+        TiledMap tiledMap = screen.getMap();
+
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
@@ -59,13 +63,13 @@ public class B2WorldCreator {
         for (MapObject object : tiledMap.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
-            new Brick(world, tiledMap, rect);
+            new Brick(screen, rect);
         }
 
         for (MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
-            new Coin(world, tiledMap, rect);
+            new Coin(screen, rect);
         }
 
 

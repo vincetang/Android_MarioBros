@@ -110,6 +110,11 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(float dt) {
+        // Don't handle input if Mario is dead
+        if (player.currentState == Mario.State.DEAD) {
+            return;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             player.b2body.applyLinearImpulse(new Vector2(0, 4f),
                     player.b2body.getWorldCenter(), true);
@@ -141,8 +146,6 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
 
-        // attach our gamecam to our players.x coordinate
-        gamecam.position.x = player.b2body.getPosition().x;
 
         gamecam.update();
         player.update(dt);
@@ -157,6 +160,12 @@ public class PlayScreen implements Screen {
 
         for (Item item : items)
             item.update(dt);
+
+        // Only move camera if Mario is not dead
+        if (player.currentState != Mario.State.DEAD) {
+            // attach our gamecam to our players.x coordinate
+            gamecam.position.x = player.b2body.getPosition().x;
+        }
 
         renderer.setView(gamecam); // only render what our gamecam can see
     }

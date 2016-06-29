@@ -24,6 +24,9 @@ public abstract class Enemy extends Sprite {
 
         // Make the enemy walk
         velocity = new Vector2(1, 0);
+
+        // Puts the box2d body to sleep (no calculations made in simulation)
+        b2body.setActive(false);
     }
 
     public void reverseVelocity(boolean x, boolean y) {

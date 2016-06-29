@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Sprites.Enemies.Enemy;
+import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Sprites.TileObjects.InteractiveTileObject;
 
 /**
@@ -49,9 +50,16 @@ public class WorldContactListener implements ContactListener {
             case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
                 Gdx.app.log("MARIO", "DIED");
                 break;
-            case MarioBros.ENEMY_BIT | MarioBros.ENEMY_BIT:
+            case MarioBros.ENEMY_BIT:
                 ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
                 ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
+                break;
+            case MarioBros.ENEMY_BIT | MarioBros.GROUND_BIT:
+                if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT)
+                    ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
+                else
+                    ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
+                break;
         }
     }
 

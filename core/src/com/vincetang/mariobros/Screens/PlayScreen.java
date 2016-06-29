@@ -114,6 +114,7 @@ public class PlayScreen implements Screen {
         // Take 1 step in the physics simulation (60 times per second);
         world.step(1/60f, 6, 2);
 
+
         // attach our gamecam to our players.x coordinate
         gamecam.position.x = player.b2body.getPosition().x;
 
@@ -121,8 +122,13 @@ public class PlayScreen implements Screen {
         player.update(dt);
         hud.update(dt);
 
-        for (Enemy enemy : creator.getGoombas())
+        for (Enemy enemy : creator.getGoombas()) {
             enemy.update(dt);
+            if (enemy.b2body.getPosition().x < player.getX() + .34f +
+                    (gamecam.position.x + gamecam.viewportWidth - player.getX()))
+                enemy.b2body.setActive(true);
+        }
+
 
         renderer.setView(gamecam); // only render what our gamecam can see
     }

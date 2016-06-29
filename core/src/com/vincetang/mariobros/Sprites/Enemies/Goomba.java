@@ -84,10 +84,10 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         Vector2[] vertices = new Vector2[4];
-        vertices[0] = new Vector2(-6, 2).scl(1 / MarioBros.PPM);
-        vertices[1] = new Vector2(6, 2).scl(1 / MarioBros.PPM);
-        vertices[2] = new Vector2(-6, -2).scl(1 / MarioBros.PPM);
-        vertices[3] = new Vector2(6, -2).scl(1 / MarioBros.PPM);
+        vertices[0] = new Vector2(-6, 1).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(6, 1).scl(1 / MarioBros.PPM);
+        vertices[2] = new Vector2(-6, -1).scl(1 / MarioBros.PPM);
+        vertices[3] = new Vector2(6, -1).scl(1 / MarioBros.PPM);
         shape.set(vertices);
 
         fdef.filter.categoryBits = MarioBros.ENEMY_BIT;
@@ -104,8 +104,8 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         PolygonShape head = new PolygonShape();
 
         vertices = new Vector2[4];
-        vertices[0] = new Vector2(-4, 6).scl(1 / MarioBros.PPM);
-        vertices[1] = new Vector2(4, 6).scl(1 / MarioBros.PPM);
+        vertices[0] = new Vector2(-6, 7).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(6, 7).scl(1 / MarioBros.PPM);
         vertices[2] = new Vector2(-6, 5).scl(1 / MarioBros.PPM);
         vertices[3] = new Vector2(6, 5).scl(1 / MarioBros.PPM);
         head.set(vertices);
@@ -122,6 +122,7 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
 
     @Override
     public void hitOnHead(Mario mario) {
+        mario.immunify(true);
         MarioBros.manager.get("audio/sounds/stomp.wav", Sound.class).play();
         setToDestroy = true;
     }

@@ -1,6 +1,5 @@
 package com.vincetang.mariobros.Tools;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -51,6 +50,7 @@ public class WorldContactListener implements ContactListener {
                     ((Mario) fixB.getUserData()).hit((Enemy) fixA.getUserData());
                    break;
             case MarioBros.ENEMY_BIT:
+            case MarioBros.ENEMY_HEAD_BIT:
                 ((Enemy) fixA.getUserData()).onEnemyHit((Enemy)fixB.getUserData());
                 ((Enemy) fixB.getUserData()).onEnemyHit((Enemy) fixA.getUserData());
                 break;
@@ -69,14 +69,11 @@ public class WorldContactListener implements ContactListener {
             case MarioBros.ITEM_BIT | MarioBros.MARIO_BIT:
 
                 if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT) {
-//                    if (fixA.getUserData() != "head")
                         ((Item) fixB.getUserData()).use((Mario) fixA.getUserData());
                 } else {
-//                    if (fixB.getUserData() != "head")
                         ((Item) fixA.getUserData()).use((Mario) fixB.getUserData());
                 }
                 break;
-
         }
     }
 

@@ -168,14 +168,22 @@ public class PlayScreen implements Screen {
         // Only move camera if Mario is not dead
         if (player.currentState != Mario.State.DEAD) {
             // attach our gamecam to our players.x coordinate
-            gamecam.position.x = player.b2body.getPosition().x;
+            if (player.b2body.getPosition().x <= gamecam.viewportWidth /2) {
+                gamecam.position.x = gamecam.viewportWidth / 2;
+            } else {
+                gamecam.position.x = player.b2body.getPosition().x;
+            }
         }
 
         renderer.setView(gamecam); // only render what our gamecam can see
 
+        if (player.currentState == Mario.State.IMMUNE && player.getStateTimer() > 0.5) {
+            player.immunify(false);
+
+        }
         if (gameOver()) {
             game.setScreen(new GameOverScreen(game));
-            //dispose();
+//            dispose();
         }
     }
 

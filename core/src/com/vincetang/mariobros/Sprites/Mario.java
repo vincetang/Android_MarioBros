@@ -26,7 +26,7 @@ import com.vincetang.mariobros.Sprites.Enemies.Turtle;
  */
 public class Mario extends Sprite {
 
-    public enum State { FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD };
+    public enum State { FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD, IMMUNE };
     public State currentState;
     public State previousState;
 
@@ -52,6 +52,7 @@ public class Mario extends Sprite {
     private boolean marioIsDead;
     public boolean touchMoveLeft;
     public boolean touchMoveRight;
+    public boolean isImmune;
 
     private float stateTimer;
 
@@ -71,7 +72,7 @@ public class Mario extends Sprite {
         runningRight = true;
         touchMoveLeft = false;
         touchMoveRight = false;
-
+        isImmune = false;
         // Standing (no animation)
         marioStand = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 0, 0, 16, 16);
         setBounds(0, 0, 16 / MarioBros.PPM, 16 / MarioBros.PPM);
@@ -114,6 +115,10 @@ public class Mario extends Sprite {
     }
 
     public void update(float dt) {
+
+        if (b2body.getPosition().y < 0) {
+            killMario();
+        }
         if (marioIsBig)
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - (6/MarioBros.PPM));
         else
@@ -123,6 +128,8 @@ public class Mario extends Sprite {
             defineBigMario();
         if (timeToRedefineMario)
             redefineMario();
+
+        // handle touch button hold
         if (touchMoveLeft)
             move(false);
         if (touchMoveRight)
@@ -173,6 +180,8 @@ public class Mario extends Sprite {
     public State getState() {
         if (marioIsDead) {
             return State.DEAD;
+        } else if (isImmune) {
+            return State.IMMUNE;
         } else if (runGrowAnimation) {
             return State.GROWING;
         } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
@@ -180,7 +189,7 @@ public class Mario extends Sprite {
         } else if (b2body.getLinearVelocity().y < 0) {
                 return State.FALLING;
         } else if (b2body.getLinearVelocity().x != 0) {
-                return State.RUNNING;
+            return State.RUNNING;
         } else {
                 return State.STANDING;
         }
@@ -295,32 +304,40 @@ public class Mario extends Sprite {
             }
 
     public void hit(Enemy enemy) {
+
         if (enemy instanceof Turtle && ((Turtle) enemy).getCurrentState() == Turtle.State.STANDING_SHELL) {
             ((Turtle) enemy).kick(this.getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED);
         } else {
-            if (marioIsBig) {
-                MarioBros.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
-                marioIsBig = false;
-                timeToRedefineMario = true;
-                setBounds(getX(), getY(), getWidth(), getHeight() / 2);
-            } else {
-                MarioBros.manager.get("audio/music/mario_music.ogg", Music.class).stop();
-                MarioBros.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
-                marioIsDead = true;
-                Filter filter = new Filter();
-                filter.maskBits = MarioBros.NOTHING_BIT;
-                for (Fixture fixture : b2body.getFixtureList())
-                    fixture.setFilterData(filter);
-                b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
-
+            if (!isImmune) {
+                if (marioIsBig) {
+                    MarioBros.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+                    marioIsBig = false;
+                    timeToRedefineMario = true;
+                    setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+                } else {
+                    killMario();
+                }
             }
         }
     }
 
-    public void jump() {
-
-        if (getState() == State.STANDING || getState() == State.RUNNING) {
+    public void killMario() {
+        if (!marioIsDead) {
+            MarioBros.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+            MarioBros.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
+            marioIsDead = true;
+            Filter filter = new Filter();
+            filter.maskBits = MarioBros.NOTHING_BIT;
+            for (Fixture fixture : b2body.getFixtureList())
+                fixture.setFilterData(filter);
             b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
+        }
+
+    }
+    public void jump() {
+        float jumpSpeed = moveSpeed == 0.1f ? 4 : 3;
+        if (getState() == State.STANDING || getState() == State.RUNNING || getState() == State.IMMUNE) {
+            b2body.applyLinearImpulse(new Vector2(0, jumpSpeed), b2body.getWorldCenter(), true);
         }
 
     }
@@ -328,13 +345,18 @@ public class Mario extends Sprite {
     public void move(boolean right) {
         if (right && b2body.getLinearVelocity().x <= 2) {
             b2body.applyLinearImpulse(new Vector2(moveSpeed, 0), b2body.getWorldCenter(), true);
-        } else if (!right && b2body.getLinearVelocity().x >= -2) {
+        } else if (!right && b2body.getLinearVelocity().x >= -2 &&
+                b2body.getPosition().x > 16/MarioBros.PPM ) {
             b2body.applyLinearImpulse(new Vector2(-moveSpeed, 0), b2body.getWorldCenter(), true);
         }
     }
 
     public boolean isDead() {
         return marioIsDead;
+    }
+
+    public void immunify(boolean immune) {
+        isImmune = immune;
     }
 
     public float getStateTimer() {

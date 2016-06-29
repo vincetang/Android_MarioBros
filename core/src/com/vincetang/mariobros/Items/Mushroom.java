@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.vincetang.mariobros.MarioBros;
+import com.vincetang.mariobros.Scenes.Hud;
 import com.vincetang.mariobros.Screens.PlayScreen;
 import com.vincetang.mariobros.Sprites.Mario;
 
@@ -54,7 +55,10 @@ public class Mushroom extends Item {
 
     @Override
     public void use(Mario mario) {
-        mario.grow();
+        if (!mario.isBig())
+            mario.grow();
+        else
+            Hud.addScore(500);
         destroy();
     }
 

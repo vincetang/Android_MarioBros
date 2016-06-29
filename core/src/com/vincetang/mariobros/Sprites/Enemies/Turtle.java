@@ -86,10 +86,10 @@ public class Turtle extends Enemy {
         PolygonShape head = new PolygonShape();
 
         vertices = new Vector2[4];
-        vertices[0] = new Vector2(-4, 6).scl(1 / MarioBros.PPM);
-        vertices[1] = new Vector2(4, 6).scl(1 / MarioBros.PPM);
-        vertices[2] = new Vector2(-6, 5).scl(1 / MarioBros.PPM);
-        vertices[3] = new Vector2(6, 5).scl(1 / MarioBros.PPM);
+        vertices[0] = new Vector2(-6, 8).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(6, 8).scl(1 / MarioBros.PPM);
+        vertices[2] = new Vector2(-4, 6).scl(1 / MarioBros.PPM);
+        vertices[3] = new Vector2(4, 6).scl(1 / MarioBros.PPM);
         head.set(vertices);
 
         // Create the head that we stomp on
@@ -104,6 +104,7 @@ public class Turtle extends Enemy {
 
     @Override
     public void hitOnHead(Mario mario) {
+        mario.immunify(true);
         if (currentState != State.STANDING_SHELL) {
             currentState = State.STANDING_SHELL;
             velocity.x = 0;

@@ -46,7 +46,7 @@ public class Hud implements Disposable{
         Table table = new Table();
         table.top(); // align table to top of stage
         table.setFillParent(true); // table fills size of our stage
-
+        //String.format("%03d", worldTimer
         countdownLabel = new Label(String.format("%03d", worldTimer),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         scoreLabel = new Label(String.format("%06d", score),

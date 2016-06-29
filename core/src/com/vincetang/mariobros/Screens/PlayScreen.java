@@ -40,6 +40,7 @@ public class PlayScreen implements Screen {
     private OrthographicCamera gamecam;
     private Viewport gamePort;
     private Hud hud;
+    private Controller controller;
     private Mario player;
     private Goomba goomba;
 
@@ -70,6 +71,7 @@ public class PlayScreen implements Screen {
                 MarioBros.V_HEIGHT / MarioBros.PPM, gamecam);
 
         hud = new Hud(game.batch);
+        controller = new Controller(game);
 
         mapLoader = new TmxMapLoader();
         tiledMap = mapLoader.load("level1.tmx");
@@ -221,7 +223,7 @@ public class PlayScreen implements Screen {
         // Set our batch to now draw what the hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // what is shown via camera
         hud.stage.draw();
-
+        controller.draw();
     }
 
     public boolean gameOver() {
@@ -238,6 +240,7 @@ public class PlayScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height);
+        controller.resize(width, height);
     }
 
     @Override
@@ -265,6 +268,7 @@ public class PlayScreen implements Screen {
     public void dispose() {
         tiledMap.dispose();
         hud.dispose();
+        controller.dispose();
         world.dispose();
         renderer.dispose();
         b2dr.dispose();

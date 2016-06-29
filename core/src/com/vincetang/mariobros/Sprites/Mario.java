@@ -30,6 +30,7 @@ public class Mario extends Sprite {
     public State currentState;
     public State previousState;
 
+
     public World world;
     public Body b2body;
 
@@ -54,11 +55,13 @@ public class Mario extends Sprite {
 
     private float stateTimer;
 
+    public float moveSpeed;
+
 
     public Mario(PlayScreen screen) {
         super();
         this.world = screen.getWorld();
-
+        moveSpeed = 0.05f;
         defineMario();
 
         currentState = State.STANDING;
@@ -325,9 +328,9 @@ public class Mario extends Sprite {
     public void move(boolean right) {
         Gdx.app.log("Mario", "moved");
         if (right && b2body.getLinearVelocity().x <= 2) {
-            b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+            b2body.applyLinearImpulse(new Vector2(moveSpeed, 0), b2body.getWorldCenter(), true);
         } else if (!right && b2body.getLinearVelocity().x >= -2) {
-            b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
+            b2body.applyLinearImpulse(new Vector2(-moveSpeed, 0), b2body.getWorldCenter(), true);
         }
     }
 

@@ -87,7 +87,7 @@ public class Controller {
                         " pointer:" + pointer + " button:" + button);
                 if (x <= 73.75) {
                     // hit B key
-                    
+                    mario.moveSpeed = 0.1f;
                 } else if (x >= 73.75) {
                     //hit A key
                     mario.jump();
@@ -98,9 +98,7 @@ public class Controller {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touched up on button", " x:" + x + " y:" +
-                        y + " pointer:" + pointer + " button:" + button);
-
+                mario.moveSpeed = 0.05f;
 
             }
 

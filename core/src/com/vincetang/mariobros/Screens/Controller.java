@@ -59,14 +59,18 @@ public class Controller {
         buttons.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touched down on button", " x:" + x + " y:" + y);
+                Gdx.app.log("Touched down on button", " x:" + x + " y:" + y +
+                        " pointer:" + pointer + " button:" + button + "testing");
+
                 return true;
 
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touched up on button", " x:" + x + " y:" + y);
+                Gdx.app.log("Touched up on button", " x:" + x + " y:" +
+                        y + " pointer:" + pointer + " button:" + button + "testing");
+
 
             }
 

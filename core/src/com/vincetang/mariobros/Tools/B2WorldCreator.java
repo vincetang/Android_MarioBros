@@ -23,8 +23,9 @@ import com.vincetang.mariobros.Sprites.Enemies.Goomba;
  */
 public class B2WorldCreator {
 
-    private Array<Goomba> goombas;
-    private Array<Turtle> turtles;
+    public static Array<Goomba> goombas;
+    public static Array<Turtle> turtles;
+    public static Array<Enemy> enemies;
 
     public Array<Turtle> getTurtles() { return turtles; }
 
@@ -107,9 +108,19 @@ public class B2WorldCreator {
     }
 
     public Array<Enemy> getEnemies() {
-        Array<Enemy> enemies = new Array<Enemy>();
+        enemies = new Array<Enemy>();
         enemies.addAll(goombas);
         enemies.addAll(turtles);
         return enemies;
+    }
+
+    public static void destroyTurtle(Turtle turtle) {
+        enemies.removeValue(turtle, true);
+        turtles.removeValue(turtle, true);
+    }
+
+    public static void destroyGoomba(Goomba goomba) {
+        enemies.removeValue(goomba, true);
+        goombas.removeValue(goomba, true);
     }
 }

@@ -15,6 +15,8 @@ import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Screens.PlayScreen;
 import com.vincetang.mariobros.Sprites.Mario;
 
+import static com.vincetang.mariobros.Tools.B2WorldCreator.destroyGoomba;
+
 /**
  * Created by Vince on 16-06-28.
  */
@@ -49,11 +51,11 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         if (setToDestroy && !destroyed) {
             world.destroyBody(b2body);
             destroyed = true;
-
             stateTime = 0; // reset timer to know how long it's been dead
 
             // animate stomped goomba
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
+
         } else if (!destroyed) {
             b2body.setLinearVelocity(velocity);
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 + 4 / MarioBros.PPM);
@@ -67,6 +69,8 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         // Drawing is not executed after 1 second of goomba being destroyed
         if (!destroyed || stateTime <1)
             super.draw(batch);
+        else if (destroyed)
+            destroyGoomba(this);
     }
 
     @Override
@@ -120,6 +124,15 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
     public void hitOnHead(Mario mario) {
         MarioBros.manager.get("audio/sounds/stomp.wav", Sound.class).play();
         setToDestroy = true;
+    }
+
+    @Override
+    public void onEnemyHit(Enemy enemy) {
+        if (enemy instanceof Turtle && ((Turtle)enemy).currentState == Turtle.State.MOVING_SHELL) {
+            setToDestroy = true;
+        } else {
+            reverseVelocity(true, false);
+        }
     }
 
 }

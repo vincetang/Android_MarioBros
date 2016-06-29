@@ -51,8 +51,8 @@ public class WorldContactListener implements ContactListener {
                     ((Mario) fixB.getUserData()).hit((Enemy) fixA.getUserData());
                    break;
             case MarioBros.ENEMY_BIT:
-                ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
-                ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
+                ((Enemy) fixA.getUserData()).onEnemyHit((Enemy)fixB.getUserData());
+                ((Enemy) fixB.getUserData()).onEnemyHit((Enemy) fixA.getUserData());
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.GROUND_BIT:
                 if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT)

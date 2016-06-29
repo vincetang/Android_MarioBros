@@ -132,10 +132,11 @@ public class Mario extends Sprite {
         shape.setRadius(7 / MarioBros.PPM);
         fdef.filter.categoryBits = MarioBros.MARIO_BIT;
         fdef.filter.maskBits = MarioBros.GROUND_BIT | MarioBros.COIN_BIT | MarioBros.BRICK_BIT |
-                MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT | MarioBros.ENEMY_HEAD_BIT;
+                MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT | MarioBros.ENEMY_HEAD_BIT |
+                MarioBros.ITEM_BIT;
 
         fdef.shape = shape;
-        b2body.createFixture(fdef);
+        b2body.createFixture(fdef).setUserData(this);
 
         EdgeShape head = new EdgeShape(); // A line between two points
         head.set(new Vector2(-2 / MarioBros.PPM, 7 / MarioBros.PPM),

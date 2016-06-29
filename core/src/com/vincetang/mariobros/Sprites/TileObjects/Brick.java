@@ -1,6 +1,7 @@
 package com.vincetang.mariobros.Sprites.TileObjects;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Screens.PlayScreen;
@@ -9,8 +10,8 @@ import com.vincetang.mariobros.Screens.PlayScreen;
  * Created by Vince on 16-06-27.
  */
 public class Brick extends InteractiveTileObject {
-    public Brick(PlayScreen screen, Rectangle bounds) {
-        super(screen, bounds);
+    public Brick(PlayScreen screen, MapObject object) {
+        super(screen, object);
         fixture.setUserData(this);
         setCategoryFilter(MarioBros.BRICK_BIT);
     }

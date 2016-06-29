@@ -98,6 +98,11 @@ public class Controller {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                // slow down mario
+                if (mario.touchMoveLeft) {
+                    mario.move(true);
+                } else if (mario.touchMoveRight)
+                    mario.move(false);
                 mario.moveSpeed = 0.05f;
 
             }

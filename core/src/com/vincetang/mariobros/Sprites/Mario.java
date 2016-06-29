@@ -326,7 +326,7 @@ public class Mario extends Sprite {
     }
 
     public void move(boolean right) {
-        Gdx.app.log("Mario", "moved");
+        Gdx.app.log("Mario", "moved " + moveSpeed);
         if (right && b2body.getLinearVelocity().x <= 2) {
             b2body.applyLinearImpulse(new Vector2(moveSpeed, 0), b2body.getWorldCenter(), true);
         } else if (!right && b2body.getLinearVelocity().x >= -2) {

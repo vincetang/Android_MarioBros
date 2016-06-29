@@ -168,6 +168,11 @@ public class PlayScreen implements Screen {
         }
 
         renderer.setView(gamecam); // only render what our gamecam can see
+
+        if (gameOver()) {
+            game.setScreen(new GameOverScreen(game));
+            //dispose();
+        }
     }
 
     public TextureAtlas getAtlas() {
@@ -218,6 +223,13 @@ public class PlayScreen implements Screen {
 
     }
 
+    public boolean gameOver() {
+        // Dead for 3 seconds
+        if (player.currentState == Mario.State.DEAD && player.getStateTimer() > 3) {
+            return true;
+        }
+        return false;
+    }
     /**
      * @param width
      * @param height
@@ -251,9 +263,9 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         tiledMap.dispose();
-        renderer.dispose();
-        world.dispose();
-        b2dr.dispose();
         hud.dispose();
+        world.dispose();
+        renderer.dispose();
+        b2dr.dispose();
     }
 }

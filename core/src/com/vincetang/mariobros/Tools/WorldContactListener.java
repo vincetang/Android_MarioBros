@@ -33,6 +33,7 @@ public class WorldContactListener implements ContactListener {
                     ((InteractiveTileObject) fixA.getUserData()).onHeadHit((Mario) fixB.getUserData());
                 break;
             case MarioBros.ENEMY_HEAD_BIT | MarioBros.MARIO_BIT:
+                Gdx.app.log("COLLISION", "MARIO + HEAD");
                 if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_HEAD_BIT)
                     ((Enemy) fixA.getUserData()).hitOnHead();
                 else
@@ -45,10 +46,11 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
                 break;
             case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
-                if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT)
-                    ((Mario) fixA.getUserData()).hit();
-                else
-                    ((Mario) fixB.getUserData()).hit();
+                Gdx.app.log("COLLISION", "MARIO + ENEMY");
+//                if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT)
+//                    ((Mario) fixA.getUserData()).hit();
+//                else
+//                    ((Mario) fixB.getUserData()).hit();
                    break;
             case MarioBros.ENEMY_BIT:
                 ((Enemy) fixA.getUserData()).reverseVelocity(true, false);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -54,7 +55,7 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
         } else if (!destroyed) {
             b2body.setLinearVelocity(velocity);
-            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 + 4 / MarioBros.PPM);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
         }
 
@@ -76,8 +77,16 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(7 / MarioBros.PPM);
+        PolygonShape shape = new PolygonShape();
+        Vector2[] vertices = new Vector2[4];
+        vertices[0] = new Vector2(-6, 2).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(6, 2).scl(1 / MarioBros.PPM);
+        vertices[2] = new Vector2(-6, -2).scl(1 / MarioBros.PPM);
+        vertices[3] = new Vector2(6, -2).scl(1 / MarioBros.PPM);
+        shape.set(vertices);
+
+//        CircleShape shape = new CircleShape();
+//        shape.setRadius(7 / MarioBros.PPM);
         fdef.filter.categoryBits = MarioBros.ENEMY_BIT;
         fdef.filter.maskBits = MarioBros.GROUND_BIT |
                 MarioBros.COIN_BIT |
@@ -90,11 +99,12 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
 
         // Create the Head here
         PolygonShape head = new PolygonShape();
-        Vector2[] vertices = new Vector2[4];
-        vertices[0] = new Vector2(-5, 8).scl(1 / MarioBros.PPM);
-        vertices[1] = new Vector2(5, 8).scl(1 / MarioBros.PPM);
-        vertices[2] = new Vector2(-3, 3).scl(1 / MarioBros.PPM);
-        vertices[3] = new Vector2(3, 3).scl(1 / MarioBros.PPM);
+//        Vector2[]
+        vertices = new Vector2[4];
+        vertices[0] = new Vector2(-4, 6).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(4, 6).scl(1 / MarioBros.PPM);
+        vertices[2] = new Vector2(-6, 5).scl(1 / MarioBros.PPM);
+        vertices[3] = new Vector2(6, 5).scl(1 / MarioBros.PPM);
         head.set(vertices);
 
         // Create the head that we stomp on

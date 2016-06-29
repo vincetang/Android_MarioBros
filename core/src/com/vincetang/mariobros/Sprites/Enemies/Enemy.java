@@ -23,7 +23,7 @@ public abstract class Enemy extends Sprite {
         defineEnemy();
 
         // Make the enemy walk
-        velocity = new Vector2(1, 0);
+        velocity = new Vector2(0.5f, 0);
 
         // Puts the box2d body to sleep (no calculations made in simulation)
         b2body.setActive(false);

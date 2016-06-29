@@ -87,7 +87,7 @@ public class Turtle extends Enemy {
 
         // Create the head that we stomp on
         fdef.shape = head;
-        fdef.restitution = 0.5f; // Causes mario to bounce off Goomba's head
+        fdef.restitution = 0.7f; // Causes mario to bounce off Goomba's head
         fdef.filter.categoryBits = (MarioBros.ENEMY_HEAD_BIT);
 
         // set user data lets you have access to this class in our collision handler
@@ -100,6 +100,9 @@ public class Turtle extends Enemy {
         if (currentState != State.STANDING_SHELL) {
             currentState = State.STANDING_SHELL;
             velocity.x = 0;
+        } else {
+            // turlte in STANDING_SHELL state
+            kick(mario.getX() <= this.getX() ? KICK_RIGHT_SPEED : KICK_LEFT_SPEED);
         }
 
     }
@@ -139,5 +142,14 @@ public class Turtle extends Enemy {
         stateTime = currentState == previousState ? stateTime + dt : 0;
         previousState = currentState;
         return region;
+    }
+
+    public void kick(int speed) {
+        velocity.x = speed;
+        currentState = State.MOVING_SHELL;
+    }
+
+    public State getCurrentState() {
+        return currentState;
     }
 }

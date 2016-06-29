@@ -13,8 +13,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.vincetang.mariobros.Items.Item;
+import com.vincetang.mariobros.Items.ItemDef;
+import com.vincetang.mariobros.Items.Mushroom;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Scenes.Hud;
 import com.vincetang.mariobros.Sprites.Enemies.Enemy;
@@ -22,6 +26,8 @@ import com.vincetang.mariobros.Sprites.Enemies.Goomba;
 import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Tools.B2WorldCreator;
 import com.vincetang.mariobros.Tools.WorldContactListener;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Vince on 16-06-26.
@@ -47,6 +53,10 @@ public class PlayScreen implements Screen {
     private B2WorldCreator creator;
 
     private Music music;
+
+    // Items
+    private Array<Item> items;
+    private LinkedBlockingQueue<ItemDef> itemsToSpawn;
 
     public PlayScreen(MarioBros game) {
         atlas = new TextureAtlas("Mario_and_Enemies.pack");
@@ -79,9 +89,24 @@ public class PlayScreen implements Screen {
         music = MarioBros.manager.get("audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.setVolume(0.5f);
-        music.play();
+        //music.play();
 
+        items = new Array<Item>();
+        itemsToSpawn = new LinkedBlockingQueue<ItemDef>();
 
+    }
+
+    public void spawnItem(ItemDef idef) {
+        itemsToSpawn.add(idef);
+    }
+
+    public void handleSpawningItems() {
+        if (!itemsToSpawn.isEmpty()) {
+            ItemDef idef = itemsToSpawn.poll();
+            if (idef.type == Mushroom.class) {
+                items.add(new Mushroom(this, idef.position.x, idef.position.y));
+            }
+        }
     }
 
     public void handleInput(float dt) {
@@ -110,6 +135,7 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         handleInput(dt);
+        handleSpawningItems();
 
         // Take 1 step in the physics simulation (60 times per second);
         world.step(1/60f, 6, 2);
@@ -129,6 +155,8 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);
         }
 
+        for (Item item : items)
+            item.update(dt);
 
         renderer.setView(gamecam); // only render what our gamecam can see
     }
@@ -170,11 +198,16 @@ public class PlayScreen implements Screen {
         player.draw(game.batch);
         for (Enemy enemy : creator.getGoombas())
             enemy.draw(game.batch);
+        for (Item item : items)
+            item.draw(game.batch);
         game.batch.end();
+
 
         // Set our batch to now draw what the hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // what is shown via camera
         hud.stage.draw();
+
+
 
 
     }

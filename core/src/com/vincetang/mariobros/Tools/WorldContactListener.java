@@ -33,11 +33,10 @@ public class WorldContactListener implements ContactListener {
                     ((InteractiveTileObject) fixA.getUserData()).onHeadHit((Mario) fixB.getUserData());
                 break;
             case MarioBros.ENEMY_HEAD_BIT | MarioBros.MARIO_BIT:
-                Gdx.app.log("COLLISION", "MARIO + HEAD");
                 if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_HEAD_BIT)
-                    ((Enemy) fixA.getUserData()).hitOnHead();
+                    ((Enemy) fixA.getUserData()).hitOnHead((Mario) fixB.getUserData());
                 else
-                    ((Enemy) fixB.getUserData()).hitOnHead();
+                    ((Enemy) fixB.getUserData()).hitOnHead((Mario) fixA.getUserData());
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT:
                 if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT)
@@ -46,11 +45,10 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
                 break;
             case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
-                Gdx.app.log("COLLISION", "MARIO + ENEMY");
-//                if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT)
-//                    ((Mario) fixA.getUserData()).hit();
-//                else
-//                    ((Mario) fixB.getUserData()).hit();
+                if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT)
+                    ((Mario) fixA.getUserData()).hit((Enemy) fixB.getUserData());
+                else
+                    ((Mario) fixB.getUserData()).hit((Enemy) fixA.getUserData());
                    break;
             case MarioBros.ENEMY_BIT:
                 ((Enemy) fixA.getUserData()).reverseVelocity(true, false);

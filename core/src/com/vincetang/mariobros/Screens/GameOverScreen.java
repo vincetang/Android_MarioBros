@@ -37,6 +37,9 @@ public class GameOverScreen implements Screen {
         Label gameOverLabel = new Label("Game Over", font);
         table.add(gameOverLabel).expandX(); // expands the whole length of the row
 
+        table.row();
+        Label playAgainLabel = new Label("Click to Play Again", font);
+        table.add(playAgainLabel).expandX().padTop(10f);
         stage.addActor(table);
 
     }
@@ -47,6 +50,10 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.justTouched()) {
+            game.setScreen(new PlayScreen((MarioBros) game));
+            dispose();
+        }
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
@@ -74,6 +81,6 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }

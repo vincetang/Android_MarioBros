@@ -115,7 +115,8 @@ public class PlayScreen implements Screen {
             return;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.getState() == Mario.State.STANDING
+                || player.getState() == Mario.State.RUNNING)) {
             player.b2body.applyLinearImpulse(new Vector2(0, 4f),
                     player.b2body.getWorldCenter(), true);
         }
@@ -151,7 +152,7 @@ public class PlayScreen implements Screen {
         player.update(dt);
         hud.update(dt);
 
-        for (Enemy enemy : creator.getGoombas()) {
+        for (Enemy enemy : creator.getEnemies()) {
             enemy.update(dt);
             if (enemy.b2body.getPosition().x < player.getX() + .34f +
                     (gamecam.position.x + gamecam.viewportWidth - player.getX()))
@@ -210,7 +211,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined); // only what the game can see
         game.batch.begin();
         player.draw(game.batch);
-        for (Enemy enemy : creator.getGoombas())
+        for (Enemy enemy : creator.getEnemies())
             enemy.draw(game.batch);
         for (Item item : items)
             item.draw(game.batch);

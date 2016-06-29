@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Screens.PlayScreen;
+import com.vincetang.mariobros.Sprites.Enemies.Enemy;
 
 /**
  * Created by Vince on 16-06-27.
@@ -280,7 +281,7 @@ public class Mario extends Sprite {
         return marioIsBig;
             }
 
-    public void hit() {
+    public void hit(Enemy enemy) {
         if (marioIsBig) {
             MarioBros.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
             marioIsBig = false;

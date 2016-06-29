@@ -1,13 +1,9 @@
 package com.vincetang.mariobros.Sprites.Enemies;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
@@ -16,9 +12,17 @@ import com.vincetang.mariobros.Screens.PlayScreen;
 import com.vincetang.mariobros.Sprites.Mario;
 
 /**
- * Created by Vince on 16-06-28.
+ * Created by Vince on 16-06-29.
  */
-public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
+public class Turtle extends Enemy {
+    public static final int KICK_LEFT_SPEED = -2;
+    public static final int KICK_RIGHT_SPEED = 2;
+
+
+    public enum State { WALKING, STANDING_SHELL, MOVING_SHELL }
+
+    public State currentState;
+    public State previousState;
 
     private float stateTime;
     private Animation walkAnimation;
@@ -26,47 +30,22 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
     private boolean setToDestroy;
     private boolean destroyed;
 
-    public Goomba(PlayScreen screen, float x, float y) {
+    private TextureRegion shell;
+
+
+    public Turtle(PlayScreen screen, float x, float y) {
         super(screen, x, y);
 
+        // Walking Animation Frames
         frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(screen.getAtlas().findRegion("turtle"), 0, 0, 16, 24));
+        frames.add(new TextureRegion(screen.getAtlas().findRegion("turtle"), 16, 0, 16, 24));
+        walkAnimation = new Animation(0.2f, frames);
+        currentState = previousState = State.WALKING;
+        setBounds(getX(), getY(), 16 / MarioBros.PPM, 24 / MarioBros.PPM);
 
-        for (int i = 0; i < 2; i++) {
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("goomba"), i * 16, 0, 16, 16));
-        }
+        shell = new TextureRegion(screen.getAtlas().findRegion("turtle"), 64, 0, 16, 24);
 
-        walkAnimation = new Animation(0.4f, frames);
-        stateTime = 0;
-
-        setBounds(getX(), getY(), 16/MarioBros.PPM, 16/MarioBros.PPM);
-
-        setToDestroy = false;
-        destroyed = false;
-    }
-
-    public void update(float dt) {
-        stateTime += dt;
-        if (setToDestroy && !destroyed) {
-            world.destroyBody(b2body);
-            destroyed = true;
-
-            stateTime = 0; // reset timer to know how long it's been dead
-
-            // animate stomped goomba
-            setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
-        } else if (!destroyed) {
-            b2body.setLinearVelocity(velocity);
-            setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 + 4 / MarioBros.PPM);
-            setRegion(walkAnimation.getKeyFrame(stateTime, true));
-        }
-
-    }
-
-    @Override
-    public void draw(Batch batch) {
-        // Drawing is not executed after 1 second of goomba being destroyed
-        if (!destroyed || stateTime <1)
-            super.draw(batch);
     }
 
     @Override
@@ -118,8 +97,47 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
 
     @Override
     public void hitOnHead(Mario mario) {
-        MarioBros.manager.get("audio/sounds/stomp.wav", Sound.class).play();
-        setToDestroy = true;
+        if (currentState != State.STANDING_SHELL) {
+            currentState = State.STANDING_SHELL;
+            velocity.x = 0;
+        }
+
     }
 
+    @Override
+    public void update(float dt) {
+        setRegion(getFrame(dt));
+        if (currentState == State.STANDING_SHELL && stateTime > 5) {
+            currentState = State.WALKING;
+            velocity.x = 1;
+        }
+
+        setPosition(b2body.getPosition().x - getWidth()/2, b2body.getPosition().y - 4/MarioBros.PPM);
+        b2body.setLinearVelocity(velocity);
+    }
+
+    public TextureRegion getFrame(float dt) {
+        TextureRegion region;
+
+        switch (currentState) {
+            case STANDING_SHELL:
+            case MOVING_SHELL:
+                region = shell;
+                break;
+            case WALKING:
+            default:
+                region = walkAnimation.getKeyFrame(stateTime, true);
+                break;
+        }
+
+        if (velocity.x > 0 && !region.isFlipX()) {
+            region.flip(true, false);
+        } else if (velocity.x < 0 && region.isFlipX()) {
+            region.flip(true, false);
+        }
+        // reset time only if state changes
+        stateTime = currentState == previousState ? stateTime + dt : 0;
+        previousState = currentState;
+        return region;
+    }
 }

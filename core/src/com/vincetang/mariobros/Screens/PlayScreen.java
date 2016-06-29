@@ -71,7 +71,6 @@ public class PlayScreen implements Screen {
                 MarioBros.V_HEIGHT / MarioBros.PPM, gamecam);
 
         hud = new Hud(game.batch);
-        controller = new Controller(game);
 
         mapLoader = new TmxMapLoader();
         tiledMap = mapLoader.load("level1.tmx");
@@ -85,6 +84,9 @@ public class PlayScreen implements Screen {
         creator = new B2WorldCreator(this);
 
         player = new Mario(this);
+
+
+        controller = new Controller(game, player);
 
         world.setContactListener(new WorldContactListener());
 
@@ -119,16 +121,15 @@ public class PlayScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.getState() == Mario.State.STANDING
                 || player.getState() == Mario.State.RUNNING)) {
-            player.b2body.applyLinearImpulse(new Vector2(0, 4f),
-                    player.b2body.getWorldCenter(), true);
+            player.jump();
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
-            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.move(true);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.move(false);
         }
     }
 

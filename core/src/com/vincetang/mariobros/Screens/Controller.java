@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.vincetang.mariobros.MarioBros;
+import com.vincetang.mariobros.Sprites.Mario;
 
 /**
  * Created by Vince on 16-06-29.
@@ -20,11 +21,14 @@ public class Controller {
     Stage stage;
     boolean upPressed, downPressed, leftPressed, rightPressed;
     OrthographicCamera cam;
+    public Mario mario;
 
-    public Controller(MarioBros game)  {
+    public Controller(final MarioBros game, final Mario mario)  {
         cam = new OrthographicCamera();
         viewport = new FitViewport(800, 480, cam);
         stage = new Stage(viewport, game.batch);
+        this.mario = mario;
+
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -32,18 +36,38 @@ public class Controller {
         table.left().setPosition(0, viewport.getWorldHeight() / 2 - 50);
         Image dpadImg = new Image(new Texture("Mario GFX/dpad.png"));
         dpadImg.setSize(150, 150);
+
         dpadImg.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touched down on", " x:" + x + " y:" + y);
+                if (mario.getState() == Mario.State.DEAD)
+                    return false;
+
+                if (x >= 52 && x <= 99 && y >= 92) {
+                    // up pushed
+//                    mario.jump();
+                    Gdx.app.log("Button", "Pushed Up");
+
+
+                } else if (x >= 52 && x <= 99 && y < 48) {
+                    // down pushed
+                    Gdx.app.log("Button", "Pushed Down");
+                } else if (x <= 55 && y <= 95 && y >= 48) {
+                    // left pushed
+                    mario.touchMoveLeft = true;
+                } else if (x >= 96 && y <=95 && y >= 48) {
+                    // right pushed
+                    mario.touchMoveRight = true;
+                    Gdx.app.log("Button", "Pushed Right");
+                }
+                Gdx.app.log("Touched", "x:" + x + " y:" + y);
                 return true;
 
             }
-
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Touched up on", " x:" + x + " y:" + y);
-
+                mario.touchMoveRight = false;
+                mario.touchMoveLeft = false;
             }
 
 
@@ -60,8 +84,14 @@ public class Controller {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.log("Touched down on button", " x:" + x + " y:" + y +
-                        " pointer:" + pointer + " button:" + button + "testing");
-
+                        " pointer:" + pointer + " button:" + button);
+                if (x <= 73.75) {
+                    // hit B key
+                    
+                } else if (x >= 73.75) {
+                    //hit A key
+                    mario.jump();
+                }
                 return true;
 
             }
@@ -69,7 +99,7 @@ public class Controller {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.log("Touched up on button", " x:" + x + " y:" +
-                        y + " pointer:" + pointer + " button:" + button + "testing");
+                        y + " pointer:" + pointer + " button:" + button);
 
 
             }

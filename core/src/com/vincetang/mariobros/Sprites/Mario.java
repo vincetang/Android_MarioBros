@@ -1,5 +1,6 @@
 package com.vincetang.mariobros.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -48,6 +49,8 @@ public class Mario extends Sprite {
     private boolean timeToDefineBigMario;
     private boolean timeToRedefineMario;
     private boolean marioIsDead;
+    public boolean touchMoveLeft;
+    public boolean touchMoveRight;
 
     private float stateTimer;
 
@@ -63,6 +66,8 @@ public class Mario extends Sprite {
 
         stateTimer = 0;
         runningRight = true;
+        touchMoveLeft = false;
+        touchMoveRight = false;
 
         // Standing (no animation)
         marioStand = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 0, 0, 16, 16);
@@ -115,6 +120,10 @@ public class Mario extends Sprite {
             defineBigMario();
         if (timeToRedefineMario)
             redefineMario();
+        if (touchMoveLeft)
+            move(false);
+        if (touchMoveRight)
+            move(true);
     }
 
     public TextureRegion getFrame(float dt) {
@@ -302,6 +311,23 @@ public class Mario extends Sprite {
                 b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
 
             }
+        }
+    }
+
+    public void jump() {
+
+        if (getState() == State.STANDING || getState() == State.RUNNING) {
+            b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
+        }
+
+    }
+
+    public void move(boolean right) {
+        Gdx.app.log("Mario", "moved");
+        if (right && b2body.getLinearVelocity().x <= 2) {
+            b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+        } else if (!right && b2body.getLinearVelocity().x >= -2) {
+            b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
         }
     }
 

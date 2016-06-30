@@ -54,10 +54,10 @@ public class Controller {
                 } else if (x >= 52 && x <= 99 && y < 48) {
                     // down pushed
                     Gdx.app.log("Button", "Pushed Down");
-                } else if (x <= 55 && y <= 95 && y >= 48) {
+                } else if (x <= 55 && y >= 38 && y <= 95)  {
                     // left pushed
                     mario.touchMoveLeft = true;
-                } else if (x >= 96 && y <=95 && y >= 48) {
+                } else if (x >= 96 && y >= 38 && y <=95) {
                     // right pushed
                     mario.touchMoveRight = true;
                     Gdx.app.log("Button", "Pushed Right");

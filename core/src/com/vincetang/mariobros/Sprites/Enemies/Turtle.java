@@ -1,5 +1,6 @@
 package com.vincetang.mariobros.Sprites.Enemies;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -37,6 +38,8 @@ public class Turtle extends Enemy {
 
     private TextureRegion shell;
 
+    private Sound turtleHitSound;
+
 
     public Turtle(PlayScreen screen, float x, float y) {
         super(screen, x, y);
@@ -52,6 +55,8 @@ public class Turtle extends Enemy {
         setBounds(getX(), getY(), 16 / MarioBros.PPM, 24 / MarioBros.PPM);
 
         shell = new TextureRegion(screen.getAtlas().findRegion("turtle"), 64, 0, 16, 24);
+
+        turtleHitSound = MarioBros.manager.get("audio/sounds/turtle_hit.wav", Sound.class);
 
     }
 
@@ -104,7 +109,9 @@ public class Turtle extends Enemy {
 
     @Override
     public void hitOnHead(Mario mario) {
+
         mario.immunify(true);
+        MarioBros.manager.get("audio/sounds/turtle_hit.wav", Sound.class).play();
         if (currentState != State.STANDING_SHELL) {
             currentState = State.STANDING_SHELL;
             velocity.x = 0;
@@ -163,6 +170,7 @@ public class Turtle extends Enemy {
     }
 
     public void kick(int speed) {
+        turtleHitSound.play();
         velocity.x = speed;
         currentState = State.MOVING_SHELL;
     }
@@ -182,7 +190,7 @@ public class Turtle extends Enemy {
                 reverseVelocity(true, false);
             }
         } else if (currentState != State.MOVING_SHELL) {
-            reverseVelocity(true, false);
+             reverseVelocity(true, false);
         }
     }
 
@@ -196,5 +204,12 @@ public class Turtle extends Enemy {
         // pop turtle up in the air
         b2body.applyLinearImpulse(new Vector2(0, 5f), b2body.getWorldCenter(), true);
 
+    }
+
+    @Override
+    public void reverseVelocity(boolean x, boolean y) {
+        if (currentState == State.MOVING_SHELL)
+            turtleHitSound.play();
+        super.reverseVelocity(x, y);
     }
 }

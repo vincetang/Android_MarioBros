@@ -130,6 +130,7 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
     @Override
     public void onEnemyHit(Enemy enemy) {
         if (enemy instanceof Turtle && ((Turtle)enemy).currentState == Turtle.State.MOVING_SHELL) {
+            MarioBros.manager.get("audio/sounds/turtle_hit.wav", Sound.class).play();
             setToDestroy = true;
         } else {
             reverseVelocity(true, false);

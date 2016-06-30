@@ -23,6 +23,7 @@ import com.vincetang.mariobros.MarioBros;
 import com.vincetang.mariobros.Scenes.Hud;
 import com.vincetang.mariobros.Sprites.Enemies.Enemy;
 import com.vincetang.mariobros.Sprites.Enemies.Goomba;
+import com.vincetang.mariobros.Sprites.Enemies.Turtle;
 import com.vincetang.mariobros.Sprites.Mario;
 import com.vincetang.mariobros.Tools.B2WorldCreator;
 import com.vincetang.mariobros.Tools.WorldContactListener;
@@ -78,7 +79,7 @@ public class PlayScreen implements Screen {
 
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
-        world = new World(new Vector2(0,-10), true);
+        world = new World(new Vector2(0, -10), true);
         b2dr = new Box2DDebugRenderer();
 
         creator = new B2WorldCreator(this);
@@ -149,9 +150,7 @@ public class PlayScreen implements Screen {
         handleSpawningItems();
 
         // Take 1 step in the physics simulation (60 times per second);
-        world.step(1/60f, 6, 2);
-
-
+        world.step(1 / 60f, 6, 2);
 
         gamecam.update();
         player.update(dt);
@@ -159,6 +158,16 @@ public class PlayScreen implements Screen {
 
         for (Enemy enemy : creator.getEnemies()) {
             enemy.update(dt);
+
+            // sleep enemy if they get too far behind us
+            if (enemy.b2body.getPosition().x < gamecam.position.x - gamecam.viewportWidth) {
+                enemy.b2body.setActive(false);
+                if (enemy instanceof Turtle) {
+                    ((Turtle) enemy).killed();
+                }
+            }
+
+            // wake up enemy when we get close enough
             if (enemy.b2body.getPosition().x < player.getX() + .34f +
                     (gamecam.position.x + gamecam.viewportWidth - player.getX()))
                 enemy.b2body.setActive(true);
@@ -167,10 +176,15 @@ public class PlayScreen implements Screen {
         for (Item item : items)
             item.update(dt);
 
+        // Make it so mario can't go past edge of screen
+        if (player.b2body.getPosition().x <= 5 / MarioBros.PPM) {
+            player.setPosition(5 / MarioBros.PPM, 32 / MarioBros.PPM);
+        }
+
         // Only move camera if Mario is not dead
         if (player.currentState != Mario.State.DEAD) {
             // attach our gamecam to our players.x coordinate
-            if (player.b2body.getPosition().x <= gamecam.viewportWidth /2) {
+            if (player.b2body.getPosition().x <= gamecam.viewportWidth / 2) {
                 gamecam.position.x = gamecam.viewportWidth / 2;
             } else {
                 gamecam.position.x = player.b2body.getPosition().x;
@@ -194,6 +208,7 @@ public class PlayScreen implements Screen {
     public TextureAtlas getAtlas() {
         return this.atlas;
     }
+
     /**
      * Called when this screen becomes the current screen for a Game
      */
@@ -246,6 +261,7 @@ public class PlayScreen implements Screen {
         }
         return false;
     }
+
     /**
      * @param width
      * @param height

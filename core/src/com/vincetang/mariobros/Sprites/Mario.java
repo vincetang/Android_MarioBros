@@ -124,7 +124,9 @@ public class Mario extends Sprite {
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - (6/MarioBros.PPM));
         else
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+
         setRegion(getFrame(dt));
+
         if (timeToDefineBigMario)
             defineBigMario();
         if (timeToRedefineMario)
@@ -136,16 +138,10 @@ public class Mario extends Sprite {
         if (touchMoveRight)
             move(true);
 
-        Gdx.app.log("MARIO", currentState.toString());
         if (justSprinted) {
-            if (getStateTimer() < 0.5) {
+            if (getStateTimer() < 0.2) {
                 moveSpeed = 0.1f;
             } else {
-                Gdx.app.log("MARIO", "REDUCE SPEED");
-//                if (b2body.getLinearVelocity().x > 0)
-//                    b2body.setLinearVelocity(new Vector2(0.05f, b2body.getLinearVelocity().y));
-//                else if (b2body.getLinearVelocity().x < 0)
-//                    b2body.setLinearVelocity(new Vector2(-0.05f, b2body.getLinearVelocity().y));
                 justSprinted = false;
             }
         }
@@ -355,12 +351,12 @@ public class Mario extends Sprite {
     }
 
     public void jump() {
-        Gdx.app.log("JUMP", currentState.toString());
         // Keep mario sprinting 1 second after the button is let go
         if (currentState != State.JUMPING) {
             float jumpSpeed = moveSpeed == 0.1f ? 4 : 3;
             if (getState() == State.STANDING || getState() == State.RUNNING || getState() == State.IMMUNE
                     || getState() == State.SPRINTING) {
+                MarioBros.manager.get("audio/sounds/jump.wav", Sound.class).play();
                 b2body.applyLinearImpulse(new Vector2(0, jumpSpeed), b2body.getWorldCenter(), true);
             }
         }

@@ -2,7 +2,9 @@ package com.vincetang.mariobros.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,6 +24,7 @@ public class GameOverScreen implements Screen {
     private Stage stage;
 
     private Game game;
+    private Sound gameOverSound;
 
     public GameOverScreen(Game game) {
         this.game = game;
@@ -42,7 +45,11 @@ public class GameOverScreen implements Screen {
         table.add(playAgainLabel).expandX().padTop(10f);
         stage.addActor(table);
 
+        gameOverSound = MarioBros.manager.get("audio/sounds/gameover.wav", Sound.class);
+        gameOverSound.play();
+
     }
+
     @Override
     public void show() {
 
@@ -50,7 +57,8 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.justTouched()) {
+        if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
+            gameOverSound.stop();
             game.setScreen(new PlayScreen((MarioBros) game));
             dispose();
         }

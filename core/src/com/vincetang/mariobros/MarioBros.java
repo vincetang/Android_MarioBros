@@ -46,6 +46,9 @@ public class MarioBros extends Game {
 		manager.load("audio/sounds/powerdown.wav", Sound.class);
 		manager.load("audio/sounds/stomp.wav", Sound.class);
 		manager.load("audio/sounds/mariodie.wav", Sound.class);
+		manager.load("audio/sounds/gameover.wav", Sound.class);
+		manager.load("audio/sounds/jump.wav", Sound.class);
+		manager.load("audio/sounds/turtle_hit.wav", Sound.class);
 		manager.finishLoading();
 
 

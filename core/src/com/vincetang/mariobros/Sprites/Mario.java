@@ -135,6 +135,20 @@ public class Mario extends Sprite {
             move(false);
         if (touchMoveRight)
             move(true);
+
+        Gdx.app.log("MARIO", currentState.toString());
+        if (justSprinted) {
+            if (getStateTimer() < 0.5) {
+                moveSpeed = 0.1f;
+            } else {
+                Gdx.app.log("MARIO", "REDUCE SPEED");
+//                if (b2body.getLinearVelocity().x > 0)
+//                    b2body.setLinearVelocity(new Vector2(0.05f, b2body.getLinearVelocity().y));
+//                else if (b2body.getLinearVelocity().x < 0)
+//                    b2body.setLinearVelocity(new Vector2(-0.05f, b2body.getLinearVelocity().y));
+                justSprinted = false;
+            }
+        }
     }
 
     public TextureRegion getFrame(float dt) {
@@ -185,16 +199,17 @@ public class Mario extends Sprite {
             return State.DEAD;
         } else if (isImmune) {
             return State.IMMUNE;
-        } else if (moveSpeed == 0.1f || moveSpeed == -0.1f) {
-            return State.SPRINTING;
         } else if (runGrowAnimation) {
             return State.GROWING;
         } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
                 return State.JUMPING;
         } else if (b2body.getLinearVelocity().y < 0) {
                 return State.FALLING;
+        } else if (moveSpeed == 0.1f || moveSpeed == -0.1f) {
+            return State.SPRINTING;
         } else if (b2body.getLinearVelocity().x != 0) {
             return State.RUNNING;
+
         } else {
                 return State.STANDING;
         }
@@ -340,17 +355,9 @@ public class Mario extends Sprite {
     }
 
     public void jump() {
+        Gdx.app.log("JUMP", currentState.toString());
         // Keep mario sprinting 1 second after the button is let go
         if (currentState != State.JUMPING) {
-            if (justSprinted) {
-                if (getStateTimer() < 1) {
-                    moveSpeed = 0.1f;
-                } else {
-                    moveSpeed = 0.5f;
-                    justSprinted = false;
-                }
-            }
-
             float jumpSpeed = moveSpeed == 0.1f ? 4 : 3;
             if (getState() == State.STANDING || getState() == State.RUNNING || getState() == State.IMMUNE
                     || getState() == State.SPRINTING) {

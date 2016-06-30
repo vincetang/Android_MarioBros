@@ -3,6 +3,7 @@ package com.vincetang.mariobros.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,13 +23,14 @@ public class Controller {
     boolean upPressed, downPressed, leftPressed, rightPressed;
     OrthographicCamera cam;
     public Mario mario;
+    private boolean wasDragged;
 
     public Controller(final MarioBros game, final Mario mario)  {
         cam = new OrthographicCamera();
         viewport = new FitViewport(800, 480, cam);
         stage = new Stage(viewport, game.batch);
         this.mario = mario;
-
+        wasDragged = false;
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -97,18 +99,25 @@ public class Controller {
 
             }
 
+
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                // slow down mario
-                if (mario.touchMoveLeft) {
-                    mario.move(true);
-                } else if (mario.touchMoveRight)
-                    mario.move(false);
+//                 slow down mario
+                Gdx.app.log("Controller", "Touched UP");
+
+//                if (mario.touchMoveLeft) {
+//                    mario.b2body.setLinearVelocity(new Vector2(-0.05f, mario.b2body.getLinearVelocity().y));
+//                } else if (mario.touchMoveRight)
+//                    mario.b2body.setLinearVelocity(new Vector2(0.05f, mario.b2body.getLinearVelocity().y));
+
                 mario.moveSpeed = 0.05f;
 
             }
 
-
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                wasDragged = true;
+            }
         });
 
         table.add(buttons).size(buttons.getWidth(), buttons.getHeight()).padRight(20);

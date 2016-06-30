@@ -33,7 +33,7 @@ public class Controller {
 
         Table table = new Table();
         table.setDebug(false);
-        table.left().setPosition(0, viewport.getWorldHeight() / 2 - 50);
+        table.left().setPosition(0, viewport.getWorldHeight() / 2 + 50);
         Image dpadImg = new Image(new Texture("Mario GFX/dpad.png"));
         dpadImg.setSize(150, 150);
 
@@ -87,6 +87,7 @@ public class Controller {
                         " pointer:" + pointer + " button:" + button);
                 if (x <= 73.75) {
                     // hit B key
+                    mario.justSprinted = true;
                     mario.moveSpeed = 0.1f;
                 } else if (x >= 73.75) {
                     //hit A key

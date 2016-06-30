@@ -131,6 +131,8 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.move(false);
         }
+
+
     }
 
     public TiledMap getMap() {
@@ -177,10 +179,12 @@ public class PlayScreen implements Screen {
 
         renderer.setView(gamecam); // only render what our gamecam can see
 
+
+        // Make mario immune last for only half a second
         if (player.currentState == Mario.State.IMMUNE && player.getStateTimer() > 0.5) {
             player.immunify(false);
-
         }
+
         if (gameOver()) {
             game.setScreen(new GameOverScreen(game));
 //            dispose();

@@ -104,10 +104,10 @@ public class Goomba extends com.vincetang.mariobros.Sprites.Enemies.Enemy {
         PolygonShape head = new PolygonShape();
 
         vertices = new Vector2[4];
-        vertices[0] = new Vector2(-6, 7).scl(1 / MarioBros.PPM);
-        vertices[1] = new Vector2(6, 7).scl(1 / MarioBros.PPM);
-        vertices[2] = new Vector2(-6, 5).scl(1 / MarioBros.PPM);
-        vertices[3] = new Vector2(6, 5).scl(1 / MarioBros.PPM);
+        vertices[0] = new Vector2(-5, 7).scl(1 / MarioBros.PPM);
+        vertices[1] = new Vector2(5, 7).scl(1 / MarioBros.PPM);
+        vertices[2] = new Vector2(-5, 5).scl(1 / MarioBros.PPM);
+        vertices[3] = new Vector2(5, 5).scl(1 / MarioBros.PPM);
         head.set(vertices);
 
         // Create the head that we stomp on

@@ -26,7 +26,7 @@ import com.vincetang.mariobros.Sprites.Enemies.Turtle;
  */
 public class Mario extends Sprite {
 
-    public enum State { FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD, IMMUNE };
+    public enum State { FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD, IMMUNE, SPRINTING };
     public State currentState;
     public State previousState;
 
@@ -53,6 +53,7 @@ public class Mario extends Sprite {
     public boolean touchMoveLeft;
     public boolean touchMoveRight;
     public boolean isImmune;
+    public boolean justSprinted;
 
     private float stateTimer;
 
@@ -73,6 +74,7 @@ public class Mario extends Sprite {
         touchMoveLeft = false;
         touchMoveRight = false;
         isImmune = false;
+        justSprinted = false;
         // Standing (no animation)
         marioStand = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 0, 0, 16, 16);
         setBounds(0, 0, 16 / MarioBros.PPM, 16 / MarioBros.PPM);
@@ -115,7 +117,6 @@ public class Mario extends Sprite {
     }
 
     public void update(float dt) {
-
         if (b2body.getPosition().y < 0) {
             killMario();
         }
@@ -153,6 +154,8 @@ public class Mario extends Sprite {
                 region = (marioIsBig ? bigMarioJump : marioJump);
                 break;
             case RUNNING:
+            case SPRINTING:
+            case IMMUNE:
                 region = (marioIsBig ? bigMarioRun.getKeyFrame(stateTimer, true) :
                         marioRun.getKeyFrame(stateTimer, true));
                 break;
@@ -182,6 +185,8 @@ public class Mario extends Sprite {
             return State.DEAD;
         } else if (isImmune) {
             return State.IMMUNE;
+        } else if (moveSpeed == 0.1f || moveSpeed == -0.1f) {
+            return State.SPRINTING;
         } else if (runGrowAnimation) {
             return State.GROWING;
         } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
@@ -332,17 +337,30 @@ public class Mario extends Sprite {
                 fixture.setFilterData(filter);
             b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
         }
-
     }
-    public void jump() {
-        float jumpSpeed = moveSpeed == 0.1f ? 4 : 3;
-        if (getState() == State.STANDING || getState() == State.RUNNING || getState() == State.IMMUNE) {
-            b2body.applyLinearImpulse(new Vector2(0, jumpSpeed), b2body.getWorldCenter(), true);
-        }
 
+    public void jump() {
+        // Keep mario sprinting 1 second after the button is let go
+        if (currentState != State.JUMPING) {
+            if (justSprinted) {
+                if (getStateTimer() < 1) {
+                    moveSpeed = 0.1f;
+                } else {
+                    moveSpeed = 0.5f;
+                    justSprinted = false;
+                }
+            }
+
+            float jumpSpeed = moveSpeed == 0.1f ? 4 : 3;
+            if (getState() == State.STANDING || getState() == State.RUNNING || getState() == State.IMMUNE
+                    || getState() == State.SPRINTING) {
+                b2body.applyLinearImpulse(new Vector2(0, jumpSpeed), b2body.getWorldCenter(), true);
+            }
+        }
     }
 
     public void move(boolean right) {
+
         if (right && b2body.getLinearVelocity().x <= 2) {
             b2body.applyLinearImpulse(new Vector2(moveSpeed, 0), b2body.getWorldCenter(), true);
         } else if (!right && b2body.getLinearVelocity().x >= -2 &&

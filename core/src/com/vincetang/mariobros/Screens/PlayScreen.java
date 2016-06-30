@@ -51,7 +51,7 @@ public class PlayScreen implements Screen {
 
     // Box2d variables
     private World world;
-    private Box2DDebugRenderer b2dr;
+//    private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
 
     private Music music;
@@ -80,7 +80,7 @@ public class PlayScreen implements Screen {
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         world = new World(new Vector2(0, -10), true);
-        b2dr = new Box2DDebugRenderer();
+//        b2dr = new Box2DDebugRenderer();
 
         creator = new B2WorldCreator(this);
 
@@ -235,7 +235,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         // render our Box2DDebugLines
-        b2dr.render(world, gamecam.combined);
+//        b2dr.render(world, gamecam.combined);
 
         // Drawing the player
         game.batch.setProjectionMatrix(gamecam.combined); // only what the game can see
@@ -300,6 +300,6 @@ public class PlayScreen implements Screen {
         controller.dispose();
         world.dispose();
         renderer.dispose();
-        b2dr.dispose();
+//        b2dr.dispose();
     }
 }
